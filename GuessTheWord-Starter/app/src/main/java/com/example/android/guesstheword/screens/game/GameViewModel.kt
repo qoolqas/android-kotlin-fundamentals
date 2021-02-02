@@ -24,11 +24,17 @@ class GameViewModel : ViewModel() {
     val currentTimeString = Transformations.map(currentTime) { time ->
         DateUtils.formatElapsedTime(time)
     }
+
     // The current word
     private val _word = MutableLiveData<String>()
     val word: LiveData<String>
         get() = _word
-
+    val wordHint = Transformations.map(word) { word ->
+        val randomPosition = (1..word.length).random()
+        "Current word has " + word.length + " letters" +
+                "\nThe letter at position " + randomPosition + " is " +
+                word.get(randomPosition - 1).toUpperCase()
+    }
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
 
