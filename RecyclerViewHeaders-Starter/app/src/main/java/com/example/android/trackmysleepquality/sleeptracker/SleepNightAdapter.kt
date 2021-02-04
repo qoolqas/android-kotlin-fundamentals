@@ -26,10 +26,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 private val ITEM_VIEW_TYPE_HEADER = 0
 private val ITEM_VIEW_TYPE_ITEM = 1
-class SleepNightAdapter(val clickListener: SleepNightListener):
+
+class SleepNightAdapter(val clickListener: SleepNightListener) :
         ListAdapter<DataItem, RecyclerView.ViewHolder>(SleepNightDiffCallback()) {
+    private val adapterScope = CoroutineScope(Dispatchers.Default)
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
@@ -54,16 +61,21 @@ class SleepNightAdapter(val clickListener: SleepNightListener):
             else -> throw ClassCastException("Unknown viewType ${viewType}")
         }
     }
+
     fun addHeaderAndSubmitList(list: List<SleepNight>?) {
-        val items = when (list) {
-            null -> listOf(DataItem.Header)
-            else -> listOf(DataItem.Header) + list.map { DataItem.SleepNightItem(it) }
+        adapterScope.launch {
+            val items = when (list) {
+                null -> listOf(DataItem.Header)
+                else -> listOf(DataItem.Header) + list.map { DataItem.SleepNightItem(it) }
+            }
+            withContext(Dispatchers.Main) {
+                submitList(items)
+            }
         }
-        submitList(items)
     }
 
 
-    class ViewHolder private constructor(val binding: ListItemSleepNightBinding) : RecyclerView.ViewHolder(binding.root){
+    class ViewHolder private constructor(val binding: ListItemSleepNightBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SleepNight, clickListener: SleepNightListener) {
             binding.sleep = item
@@ -87,6 +99,7 @@ class SleepNightDiffCallback : DiffUtil.ItemCallback<DataItem>() {
     override fun areItemsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
         return oldItem.id == newItem.id
     }
+
     @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: DataItem, newItem: DataItem): Boolean {
         return oldItem == newItem
@@ -96,17 +109,20 @@ class SleepNightDiffCallback : DiffUtil.ItemCallback<DataItem>() {
 class SleepNightListener(val clickListener: (sleepId: Long) -> Unit) {
     fun onClick(night: SleepNight) = clickListener(night.nightId)
 }
+
 sealed class DataItem {
     abstract val id: Long
-    data class SleepNightItem(val sleepNight: SleepNight): DataItem()      {
+
+    data class SleepNightItem(val sleepNight: SleepNight) : DataItem() {
         override val id = sleepNight.nightId
     }
 
-    object Header: DataItem() {
+    object Header : DataItem() {
         override val id = Long.MIN_VALUE
     }
 }
-class TextViewHolder(view: View): RecyclerView.ViewHolder(view) {
+
+class TextViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     companion object {
         fun from(parent: ViewGroup): TextViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
