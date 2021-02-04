@@ -34,6 +34,7 @@
             android:layout_width="@dimen/icon_size"
             android:layout_height="60dp"
             android:layout_marginStart="16dp"
+            app:sleepImage="@{sleep}"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -44,6 +45,7 @@
         <TextView
             android:id="@+id/sleep_length"
             android:layout_width="0dp"
+            app:sleepDurationFormatted="@{sleep}"
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -57,6 +59,7 @@
             android:id="@+id/quality_string"
             android:layout_width="0dp"
             android:layout_height="20dp"
+            app:sleepQualityString="@{sleep}"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="@+id/sleep_length"
             app:layout_constraintHorizontal_bias="0.0"
