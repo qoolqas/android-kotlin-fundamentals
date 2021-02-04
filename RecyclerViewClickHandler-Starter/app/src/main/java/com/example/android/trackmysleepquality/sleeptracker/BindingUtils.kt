@@ -32,8 +32,10 @@ fun TextView.setSleepDurationFormatted(item: SleepNight) {
 
 
 @BindingAdapter("sleepQualityString")
-fun TextView.setSleepQualityString(item: SleepNight) {
+fun TextView.setSleepQualityString(item: SleepNight?) {
+    item?.let {
         text = convertNumericQualityToString(item.sleepQuality, context.resources)
+    }
 }
 
 
@@ -51,3 +53,4 @@ fun ImageView.setSleepImage(item: SleepNight) {
             else -> R.drawable.ic_sleep_active
         })
 }
+
