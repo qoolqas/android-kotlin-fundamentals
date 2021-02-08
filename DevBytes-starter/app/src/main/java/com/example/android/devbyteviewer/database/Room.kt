@@ -27,11 +27,9 @@ interface VideoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll( videos: List<DatabaseVideo>)
 }
+@Database(entities = [DatabaseVideo::class], version = 1)
 abstract class VideosDatabase: RoomDatabase() {
-    @Database(entities = [DatabaseVideo::class], version = 1)
-    abstract class VideosDatabase: RoomDatabase() {
-        abstract val videoDao: VideoDao
-    }
+    abstract val videoDao: VideoDao
 }
 private lateinit var INSTANCE: VideosDatabase
 
