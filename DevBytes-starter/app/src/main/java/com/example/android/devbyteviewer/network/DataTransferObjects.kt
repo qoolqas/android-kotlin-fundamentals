@@ -16,9 +16,19 @@
 
 package com.example.android.devbyteviewer.network
 
+import com.example.android.devbyteviewer.database.DatabaseVideo
 import com.example.android.devbyteviewer.domain.DevByteVideo
 import com.squareup.moshi.JsonClass
-
+fun NetworkVideoContainer.asDatabaseModel(): List<DatabaseVideo> {
+    return videos.map {
+        DatabaseVideo(
+                title = it.title,
+                description = it.description,
+                url = it.url,
+                updated = it.updated,
+                thumbnail = it.thumbnail)
+    }
+}
 /**
  * DataTransferObjects go in this file. These are responsible for parsing responses from the server
  * or formatting objects to send to the server. You should convert these to domain objects before
