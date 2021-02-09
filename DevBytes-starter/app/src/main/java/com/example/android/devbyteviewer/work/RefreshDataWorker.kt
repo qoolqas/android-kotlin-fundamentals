@@ -20,4 +20,7 @@ class RefreshDataWorker(appContext: Context, params: WorkerParameters) :
         return Result.success()
 
     }
+    companion object {
+        const val WORK_NAME = "com.example.android.devbyteviewer.work.RefreshDataWorker"
+    }
 }
